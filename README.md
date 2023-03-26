@@ -73,7 +73,7 @@
 <details>
 <summary>code</summary>
 
-#### 1、查看暂存区文件  
+#### (一)查看暂存区文件  
 `git status -s`
 
 - M README # 右边的 M 表示该文件被修改了但是还没放入暂存区  
@@ -81,14 +81,11 @@ MM Rakefile # 左边的 M 表示该文件被修改了并放入了暂存区；右
 A lib/git.rb # A表示新添加到暂存区中的文件  
 ?? LICENSE.txt # ??表示新添加的未跟踪文件
 
-#### 2、删除暂存区指定文件(file.txt)  
-`git rm file.txt`
+| **删除暂存区和工作区指定文件(file.txt)**  | **删除暂存区和工作区指定文件夹(file)**  | **删除暂存区所有文件(保留工作区文件)** |
+| :---: | :---: | :---: |
+| `git rm file.txt`  | `git rm -r file` | `git rm -rf --cached .` |
 
-#### 3、删除暂存区指定文件夹(file)  
-`git rm -r file`
-
-#### 4、删除暂存区所有文件  
-`git rm -rf --cached .`
+> --cached:表示删除git追踪文件,并不会删除工作区任何文件
 </details>
 
 ### 7、提交文件到本地仓库
@@ -113,8 +110,8 @@ A lib/git.rb # A表示新添加到暂存区中的文件
 `git remote -v`
 </details>
 
-### 2、添加/修改/删除远程仓库链接[remote命令]
-- **添加https链接(二选一)[公开仓库首选]**
+### 2、添加/修改/删除远程仓库链接[remote命令] <a id="_link_remote"></a>
+- **添加https链接(二选一)[公开仓库首选]** 
 <details>
 <summary>code</summary>
 
@@ -183,7 +180,7 @@ You've successfully authenticated, but GitHub does not provide shell access.
 > 后面的操作与添加https链接的类似，不再赘述！！
 </details>
 
-### 3、增/删/查/改branch分支[branch/checkout命令]
+### 3、增/删/查/改branch分支及替换分支文件[branch/checkout命令]
 <details>
 <summary>code</summary>
 
@@ -193,12 +190,11 @@ You've successfully authenticated, but GitHub does not provide shell access.
 | :---: | :---: | :--: |
 | `git branch`  | `git branch -r` | `git branch -a` |
 
-*(2)创建/修改/切换/合并/删除分支*  
-- 创建分支名为test  
-`git branch test`
+*(2)创建/修改/切换/合并/删除分支*
 
-- 修改分支名为main  
-`git branch -m main` or `git branch -M main`
+| **创建分支名为`test`**  | **修改分支名为`main`**  | **删除分支名为`test`** |
+| :---: | :---: | :---: |
+| `git branch test`  | `git branch -m main` <br/>or<br/> `git branch -M main` | `git branch -d test` |
 
 | 参数  | 说明  |
 | :---: | :---: |
@@ -208,14 +204,24 @@ You've successfully authenticated, but GitHub does not provide shell access.
 | -m --move | 移动或重命名 |
 | -M | --move --force的快捷键 |
 
-- 以`main`分支为基础创建并切换到`dev`分支  
-`git checkout -b dev main`
+- 切换分支[checkout命令]
 
-- 以当前分支为基础创建并切换到`dev`分支  
-`git checkout -b dev`
+| **以`main`分支为基础创建并切换到`dev`分支**  | **以当前分支为基础创建并切换到`dev`分支**  | **切换到main分支** |
+| :---: | :---: | :--: |
+| `git checkout -b dev main`  | `git checkout -b dev` | `git checkout main` |
 
-- 切换到main分支  
-`git checkout main`
+> --orphan:创建孤立分支，没有父节点的历史提交的新分支，但存在父节点所有文件。  
+-b:创建包含父节点所有文件和历史提交的分支
+
+*(4)替换其他分支文件到当前分支上*  
+- 将`test`分支上的`a.txt`文件替换到当前分支`main`上  
+`git checkout test a.txt`
+
+- 将`test`分支上的`a.txt`文件和`.github`文件夹替换到当前分支`main`上  
+`git checkout test a.txt .github`
+
+- 将`test`分支上的所有文件替换到当前分支`main`上  
+`git checkout test .`
 </details>
 
 ### 4、合并其他分支到当前分支[merge命令]
@@ -236,20 +242,30 @@ You've successfully authenticated, but GitHub does not provide shell access.
 <details>
 <summary>code</summary>
 
- #### 1、本地的`main`分支推送到别名`origin`远程仓库的`main`分支  
+ #### (一)本地的`main`分支推送到别名`origin`远程仓库的`main`分支  
 `git push -u origin main`
 
-#### 2、本地的`master`分支推送到别名`origin`远程仓库的`main`分支  
+#### (二)本地的`master`分支推送到别名`origin`远程仓库的`main`分支  
 `git push origin master:main`
 
-#### 3、本地仓库所有分支推送到远程仓库  
+#### (三)本地仓库所有分支推送到远程仓库  
 `git push --all origin`
 
-#### 4、强制推送本地仓库到远程仓库  
+#### (四)强制推送本地仓库到远程仓库  
 `git push -u -f origin main`
 
-#### 5、删除远程仓库`main`分支  
-`git push origin :main` or `git push origin --delete main`
+#### (五)删除远程仓库`main`分支  
+`git push origin :main` <br/>or<br/> `git push origin --delete main`
+</details>
+
+### 6、取回远程仓库代码[pull命令]
+<details>
+<summary>code</summary>
+
+> 必须存在`remote`远程仓库链接，如果没有请查看[添加/修改/删除远程仓库链接[remote命令]](#_link_remote)
+
+- 拉取远程仓库`origin`的`test`分支到本地的`main`分支  
+`git pull origin test:main`
 </details>
 
 ## 三、【git拉取远程仓库代码维护】
@@ -282,29 +298,27 @@ You've successfully authenticated, but GitHub does not provide shell access.
 
 `git clone git@github.com:zhangsan/xxx.git`
 
-- #### --- 提醒 ---：
+- #### --- 提醒 ---：  
 `git clone --depth=1 https://github.com/zhangsan/xxx.git`
 
 > --depth=1:表示只拉取最新一次历史提交记录(减少.git空间)，慎用
-- 如果使用了--depth=1参数拉取远程仓库，使用`git push`会出现"shallow update not allowed"报错，请使用如下代码补齐`.git`信息即可
+- 如果使用了--depth=1参数拉取远程仓库，使用`git push`会出现"shallow update not allowed"报错，请使用如下代码补齐`.git`信息即可  
 `git fetch --unshallow https://github.com/zhangsan/xxx.git`
- 
-
 </details>
 
 ### 2、对仓库进行压缩合并/回退/变基/撤销操作[revert/reset/rebase命令]
 
-#### 1、查看历史记录
+#### (一)查看历史记录(可获取`commit_id`)
 <details>
 <summary>code</summary>
 
-| **日志从新-旧排序 **  | **日志从旧-新排序**  |  **仓库历史版本记录** |
+| **日志从新-旧排序**  | **日志从旧-新排序**  |  **仓库历史版本记录** |
 | :---: | :---: | :---: |
 | `git log` | `git log --reverse` | `git reflog` |
 </details>
 
-> 假设需要回退到commitid为：abcd123def  
-#### 2、撤销某次提交（所有log均保留），此次撤销会作为一次新的提交
+> 假设操作的commit_id为：abcd123def  
+#### (二)撤销某次提交（所有log均保留），此次撤销会作为一次新的提交
 <details>
 <summary>code</summary>
 
@@ -314,7 +328,7 @@ You've successfully authenticated, but GitHub does not provide shell access.
 `git revert -n abc123edf..uvw789xyz`
 </details>
 
-#### 3、回退仓库至历史提交
+#### (三)回退仓库至历史提交
 <details>
 <summary>code</summary>
 
@@ -327,27 +341,30 @@ You've successfully authenticated, but GitHub does not provide shell access.
 - 此时如果直接执行`git push -f`可以在不影响工作区下让远程仓库回退代码到`abc123def`位置，此时该位置会成为远程仓库最新一次提交  
 </details>
 
-#### 4、恢复工作区已修改的代码保持与远程仓库最新一次提交
+#### (四)恢复工作区已修改的代码，保持与远程仓库一致
 <details>
 <summary>code</summary>
 
 *(1)未添加到暂存区*
+
 | **丢弃某个修改的文件(a.txt)** | **撤销某个修改的文件(a.txt)** | **撤销指定文件`a.txt`到`abc123def`版本** | **丢弃全部修改的文件(回到暂存区之前的样子,放弃所有修改)** |
 |:---: | :---: | :---: | :---: |
 | `git checkout -- a.txt` | `git checkout a.txt` | `git checkout abc123def a.txt` | `git checkout -- .` |
 
-*(2)代码`git add`到缓存区，但未commit提交*  
+*(2)代码`git add`到缓存区，但未commit提交*
+
 | **丢弃暂存区某个文件(a.txt)** | **丢弃全部暂存区的文件** |
 | :---: | :---: |
 | `git reset HEAD a.txt` | `git reset HEAD .` |
 
-*(3)`git commit`到本地分支、但没有`git push`到远程*  
+*(3)`git commit`到本地分支、但没有`git push`到远程*
+
 | **回到`abc123def`版本** | **回到最新的一次提交** | **代码保留，回到 git add 之前** |
 | :---: | :---: | :---: |
 | `git reset --hard abc123def` | `git reset --hard HEAD^` | `git reset HEAD^` |
 </details>
 
-#### 5、合并压缩多次提交日志
+#### (五)合并压缩多次提交日志[变基操作]
 <details>
 <summary>code</summary>
 
@@ -383,3 +400,54 @@ fixup  表示放弃当前commit注释(删除该commit注释)，保留上一个pi
 *(5)恢复与上游仓库`master`分支代码一致*  
 `git reset --hard upstream/master`
 </details>
+
+## 四、【git标签tag的使用】  
+
+> 假设操作的tag标签名为：v1.0  
+### 1、tag标签基本用法
+<details>
+<summary>code</summary>
+
+*(1)查看tag标签*
+
+| **查看本地tag标签** | **查看本地`v1.0`tag标签的详细信息** | **查看远程`origin`所有tag标签** |
+| :---: | :---: | :---: |
+| `git tag -l` | `git show v1.0` | `git ls-remote --tags origin` <br/>or<br/> `git show-ref --tag` |
+
+*(2)创建tag标签*
+
+| **以最近一次提交创建本地`v1.0`标签** | **以历史commit_id为`abc123def`提交创建`v1.0`标签** |
+| :---: | :---: |
+| `git tag v1.0` | `git tag -a v1.0 abc123def` |
+
+> -a：定义标签名(当仅有`-a`时建议与`-m`一同使用)
+-m：创建附注内容
+-f：强制覆盖已存在标签
+
+*(3)删除tag标签*
+
+| **删除本地`v1.0`标签** | **删除远程`origin`的`v1.0`标签** | **强制删除远程`origin`的`v1.0`标签** |
+| :---: | :---: | :---: |
+| `git tag -d v1.0` | `git push origin -d v1.0` <br/>or<br/> `git push origin :refs/tags/v1.0` | `git push origin :v1.0 -f` |
+
+- 批量删除tag标签
+
+| **删除本地所有标签** | **删除远程`origin`的所有标签** |
+| :---: | :---: |
+| `git tag -l \| xargs git tag -d` | `git show-ref --tag \| awk '{print $2}' \| xargs git push origin -d` <br/>or<br/> ` git ls-remote --tags origin \| awk '{print $2}' \| xargs git push origin -d`|
+
+*(4)推送tag标签到远程仓库*(`-f`表示强制推送,谨慎使用)
+
+| **推送本地`v1.0`标签到远程`origin`** | **推送本地所有标签到远程`origin`** | **推送本地`v1.0`标签到远程`origin`的`v1.1`标签** |
+| :---: | :---: | :---: |
+| `git push origin v1.0` | `git push origin --tags` | ` git push origin v1.0:v1.1 -f` |
+</details>
+
+### 2、检出标签代码
+<details>
+<summary>code</summary>
+
+*(1)基于`v1.0`标签的代码创建并切换到`dev`分支*  
+`git checkout -b dev v1.0`
+</details>
+
