@@ -3,7 +3,7 @@ name: 'test_wk'
 
 on:
   schedule:
-    - cron: "35 18,20,23,2,6,10,12 */15 * *"
+    - cron: "4 17,21,23,3,6,8,12 */15 * *"
   # 点击star时触发运行
   #watch:
     #types: started
