@@ -49,6 +49,8 @@ jobs:
           cron_dmw: "*/15 * *"
           
       - name: run bash
+        env:
+          workflow_name: ${{ github.workflow_ref }}
         run: |
           echo ${{ github.workflow_ref }}
           ls -a
