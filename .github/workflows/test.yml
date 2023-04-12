@@ -40,7 +40,7 @@ jobs:
           #ref_branch: main
           #author: ${{ secrets.AUTHOR }}
           github_token: ${{ secrets.PAT }}
-          push_switch: false
+          #push_switch: false
           keep_history: true
           time_zone: "UTC+8"
           hour_start: 0
