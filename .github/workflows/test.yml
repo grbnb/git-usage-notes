@@ -40,7 +40,8 @@ jobs:
           #ref_branch: main
           #author: ${{ secrets.AUTHOR }}
           github_token: ${{ secrets.PAT }}
-          keep_history: false
+          push_switch: false
+          keep_history: true
           time_zone: "UTC+8"
           hour_start: 0
           hour_end: 21
@@ -49,5 +50,11 @@ jobs:
           
       - name: run bash
         run: |
+          echo ${{ github.workflow_ref }}
+          ls -a
+          echo ${workflow_name%%@*}
+          mkdir dists && cp -r ./.github ./dists
+          ls -a . ./dists/.github
+          workflow_name=$(echo "${workflow_name}" | sed 's/^[^/]*\/[^/]*\///;s/@.*$//')
           cat ${workflow_name}
       
