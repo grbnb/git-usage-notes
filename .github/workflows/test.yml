@@ -35,7 +35,7 @@ jobs:
  #         cat ${workflow_name}
       
       - name: Random Cron
-        uses: grbnb/random-workflow-cron@dev
+        uses: grbnb/random-workflow-cron@main
         with:
           #ref_branch: main
           #author: ${{ secrets.AUTHOR }}
