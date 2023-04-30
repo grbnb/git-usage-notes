@@ -41,7 +41,7 @@ jobs:
           #   nightly, master, pr-2, 1.2.3, 1.2, 1
           tags: |
             type=schedule,pattern=nightly
-            type=edge
+            type=edge,,priority=600
             type=ref,event=branch,priority=600
             type=ref,event=pr,priority=600
             type=ref,event=tag,priority=600
@@ -53,6 +53,6 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
-            type=raw,value=${{ github.event.inputs.tags }}
+            type=raw,value=${{ github.event.inputs.tags }},priority=1000
           flavor: |
             latest=${{ github.event.inputs.latests == 'true' }}
