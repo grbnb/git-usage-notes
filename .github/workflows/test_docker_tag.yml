@@ -16,6 +16,11 @@ on:
   # 手动触发
    workflow_dispatch:
      inputs:
+       latests:
+        description: '镜像是否启用latest标签，不勾选不启用，默认启用'
+        type: boolean
+        required: true
+        default: 'true'
        tags:
         description: 'tags：请填写镜像版本号，如1.0'
         required: true
@@ -50,4 +55,4 @@ jobs:
             type=semver,pattern={{major}}
             type=raw,value=${{ github.event.inputs.tags }}
           flavor: |
-            latest=auto
+            latest=${{ github.event.inputs.latests == 'true' }}
