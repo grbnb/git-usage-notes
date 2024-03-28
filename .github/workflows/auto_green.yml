@@ -1,0 +1,44 @@
+name: 'Auto Green'
+
+on:
+  schedule:
+    #- cron: '0 0 */7 * *'
+    - cron: '10 4 */3 * *'
+  workflow_dispatch:
+
+env:
+  #REF_BRANCH: output  ## 选择一个需要处理的其他分支名，这里选的output分支
+  REF_BRANCH: ${{ github.ref_name }}  ## 处理当前默认主分支时启用(二选一,务必填写正确)
+
+jobs:
+  auto-clear:
+    runs-on: ubuntu-latest
+    
+    permissions: write-all
+      #contents: write
+  
+    steps:
+      - name: Delete workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+#         uses: GitRML/delete-workflow-runs@main
+        with:
+          keep_minimum_runs: '2'
+          retain_days: '3'
+          
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ env.REF_BRANCH }}
+          #ref: ${{ github.ref_name }}
+
+      - name: Clearing history commit logs
+        run: |
+          git config user.name ${{ github.repository_owner }}
+          git config user.email ${{ secrets.GIT_EMAIL }}  ## 去secrets中添加GIT_EMAIL变量，值为GitHub邮箱
+          #git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git checkout --orphan latest_branch
+          git rm -rf --cached .
+          git add -A
+          git commit -m "Clear commit"
+          git show-ref -q --heads ${{ env.REF_BRANCH }} && git branch -D ${{ env.REF_BRANCH }}
+          git branch -m ${{ env.REF_BRANCH }}
+          git push -f origin ${{ env.REF_BRANCH }}
