@@ -1,0 +1,58 @@
+name: 'test_docker_tag'
+
+on:
+   push:
+     branches:
+      #- 'dockerfile'  # 选择推送tag标签则自动触发运行的分支
+      - 'dev'
+    # Sequence of patterns matched against refs/tags
+     tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+  #schedule:
+    #- cron: '0 0 */7 * *'
+  # 点击star时触发运行
+  #watch:
+    #types: started
+  # 手动触发
+   workflow_dispatch:
+     inputs:
+       latests:
+        description: '镜像是否启用latest标签，不勾选不启用，默认启用'
+        type: boolean
+        required: true
+        default: 'true'
+       tags:
+        description: 'tags：请填写镜像版本号，如1.0'
+        required: true
+        default: ''
+      
+jobs:
+  test_docker_tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta   # 处理并输出镜像tag版本号[docker/metadata-action@master]
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            name=test/image,enable=true
+            name=ghcr.io/test/image,enable=true
+          # metadata 使用说明：https://github.com/docker/metadata-action
+          #   nightly, master, pr-2, 1.2.3, 1.2, 1
+          tags: |
+            type=schedule,pattern=nightly
+            type=edge,,priority=600
+            type=ref,event=branch,priority=600
+            type=ref,event=pr,priority=600
+            type=ref,event=tag,priority=600
+            type=match,pattern=\d.\d.\d,priority=600
+            type=match,pattern=v(.*),priority=600,group=1
+            type=match,pattern=v(\d.\d),priority=800,group=1
+            type=pep440,pattern={{version}},priority=900
+            type=pep440,pattern={{major}}.{{minor}},priority=1000
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=raw,value=${{ github.event.inputs.tags }},priority=1000
+          flavor: |
+            latest=${{ github.event.inputs.latests == 'true' }}
